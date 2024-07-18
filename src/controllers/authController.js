@@ -1,6 +1,9 @@
 const Administrador = require('../models/administrador');
 const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
+const authService = require('../services/authService');
+
+
 
 const register = async (req, res) => {
     try {
