@@ -12,21 +12,26 @@ const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccio
         let procedure;
         let params;
 
-        if (tipoUsuario === 'administrador') {
-            procedure = 'CALL CreateAdministrador(?, ?, ?, ?)';
-            params = [nombre, hashedPassword, correo_electronico, telefono];
-        } else if (tipoUsuario === 'empleado') {
-            procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?, ?, ?)';
-            params = [nombre, hashedPassword, 'activo', telefono, 'permisos', correo_electronico, ''];
-        } else if (tipoUsuario === 'comprador') {
-            procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
-            params = [nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico];
-        } else {
-            throw new Error('Tipo de usuario no válido');
+        switch (tipoUsuario) {
+            case 'administrador':
+                procedure = 'CALL CreateAdministrador(?, ?, ?, ?)';
+                params = [nombre, hashedPassword, correo_electronico, telefono];
+                break;
+            case 'empleado':
+                procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?, ?, ?)';
+                params = [nombre, hashedPassword, 'activo', telefono, 'permisos', correo_electronico, ''];
+                break;
+            case 'comprador':
+                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
+                params = [nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico];
+                break;
+            default:
+                throw new Error('Tipo de usuario no válido');
         }
 
         await query(procedure, params);
     } catch (err) {
+        console.error('Error en el registro:', err.message);
         throw err;
     }
 };
@@ -36,17 +41,21 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         let table;
         let idField;
 
-        if (tipoUsuario === 'administrador') {
-            table = 'administrador';
-            idField = 'idadministrador';
-        } else if (tipoUsuario === 'empleado') {
-            table = 'empleado';
-            idField = 'idempleado';
-        } else if (tipoUsuario === 'comprador') {
-            table = 'comprador';
-            idField = 'idComprador';
-        } else {
-            throw new Error('Tipo de usuario no válido');
+        switch (tipoUsuario) {
+            case 'administrador':
+                table = 'administrador';
+                idField = 'idadministrador';
+                break;
+            case 'empleado':
+                table = 'empleado';
+                idField = 'idempleado';
+                break;
+            case 'comprador':
+                table = 'comprador';
+                idField = 'idComprador';
+                break;
+            default:
+                throw new Error('Tipo de usuario no válido');
         }
 
         const result = await query(`SELECT * FROM ${table} WHERE correo_electronico = ?`, [correo_electronico]);
@@ -56,8 +65,8 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         }
 
         const user = result[0];
-
         const match = await bcrypt.compare(contrasena, user.contrasena);
+
         if (!match) {
             throw new Error('Contraseña incorrecta');
         }
@@ -65,6 +74,7 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         const token = jwt.sign({ id: user[idField], tipoUsuario }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return token;
     } catch (err) {
+        console.error('Error en el login:', err.message);
         throw err;
     }
 };
