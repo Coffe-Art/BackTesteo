@@ -2,7 +2,7 @@ const db = require('../utils/db');
 
 const Comprador = {
     create: (nombre, nombreUsuario, contrasena, direccion, ciudad, codigoPostal, telefono, correo_electronico, callback) => {
-        const query = 'CALL CreateComprador(COALESCE(?, nombre), COALESCE(?, nombreUsuario), COALESCE(?, contrasena), COALESCE(?, direccion), COALESCE(?, ciudad), COALESCE(?, codigoPostal), COALESCE(?, telefono), COALESCE(?, correo_electronico))';
+        const query = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
         db.query(query, [nombre, nombreUsuario, contrasena, direccion, ciudad, codigoPostal, telefono, correo_electronico], callback);
     },
     findByEmail: (email, callback) => {

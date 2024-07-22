@@ -1,46 +1,55 @@
+const bcrypt = require('bcrypt');
 const Administrador = require('../models/administrador');
 const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
-
-
 
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
         const { tipoUsuario, nombre, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal } = req.body;
 
+        // Convertir tipoUsuario a minúsculas
+        const tipoUsuarioLower = tipoUsuario.toLowerCase();
+
+        // Hashear la contraseña
+        const hashedPassword = await bcrypt.hash(contrasena, 10);
+
         // Verificar tipo de usuario y realizar el registro correspondiente
-        if (tipoUsuario === 'administrador') {
-            Administrador.create(nombre, contrasena, correo_electronico, telefono, (err) => {
-                if (err) {
-                    console.error(err.message);
-                    return res.status(500).send(err.message);
-                }
-                res.status(201).send('Administrador registrado con éxito');
-            });
-        } else if (tipoUsuario === 'empleado') {
-            Empleado.create(nombre, contrasena, correo_electronico, telefono, (err) => {
-                if (err) {
-                    console.error(err.message);
-                    return res.status(500).send(err.message);
-                }
-                res.status(201).send('Empleado registrado con éxito');
-            });
-        } else if (tipoUsuario === 'comprador') {
-            Comprador.create(nombre, nombreUsuario, contrasena, direccion, ciudad, codigopostal, telefono, correo_electronico, (err) => {
-                if (err) {
-                    console.error(err.message);
-                    return res.status(500).send(err.message);
-                }
-                res.status(201).send('Comprador registrado con éxito');
-            });
-        } else {
-            return res.status(400).send('Tipo de usuario no válido');
+        let result;
+        switch (tipoUsuarioLower) {
+            case 'administrador':
+                result = await new Promise((resolve, reject) => {
+                    Administrador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    });
+                });
+                break;
+            case 'empleado':
+                result = await new Promise((resolve, reject) => {
+                    Empleado.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    });
+                });
+                break;
+            case 'comprador':
+                result = await new Promise((resolve, reject) => {
+                    Comprador.create(nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico, (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    });
+                });
+                break;
+            default:
+                return res.status(400).json({ error: 'Tipo de usuario no válido' });
         }
+
+        res.status(201).json({ message: `${tipoUsuarioLower.charAt(0).toUpperCase() + tipoUsuarioLower.slice(1)} registrado con éxito` });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send(err.message);
+        console.error('Error en el registro:', err.message);
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -49,12 +58,15 @@ const login = async (req, res) => {
         console.log("Login endpoint hit");
         const { tipoUsuario, correo_electronico, contrasena } = req.body;
 
+        // Convertir tipoUsuario a minúsculas
+        const tipoUsuarioLower = tipoUsuario.toLowerCase();
+
         // Asegúrate de que authService esté configurado para manejar el inicio de sesión
-        const token = await authService.login(tipoUsuario, correo_electronico, contrasena);
+        const token = await authService.login(tipoUsuarioLower, correo_electronico, contrasena);
         res.json({ token });
     } catch (err) {
-        console.error(err.message);
-        res.status(400).send(err.message);
+        console.error('Error en el login:', err.message);
+        res.status(400).json({ error: err.message });
     }
 };
 
