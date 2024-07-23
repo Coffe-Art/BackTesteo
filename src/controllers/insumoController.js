@@ -1,4 +1,4 @@
-const Insumo = require('../models/insumoModel');
+const Insumo = require('../models/insumos');
 
 // Controlador para crear un nuevo insumo
 exports.createInsumo = (req, res) => {
