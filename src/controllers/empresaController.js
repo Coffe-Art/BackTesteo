@@ -58,6 +58,23 @@ exports.deleteEmpresa = (req, res) => {
     });
 };
 
+// Controlador para obtener todas las empresas creadas por un administrador específico
+exports.getEmpresasByAdmin = (req, res) => {
+    const idadministrador = req.params.idadministrador;
+    Empresa.findByAdminId(idadministrador, (err, empresas) => {
+        if (err) {
+            console.error('Error al obtener empresas:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            if (empresas && empresas.length > 0) {
+                res.status(200).json(empresas);
+            } else {
+                res.status(404).json({ error: 'No se encontraron empresas para este administrador' });
+            }
+        }
+    });
+};
+
 // Controlador para vincular un empleado a una empresa
 exports.linkEmpleadoToEmpresa = (req, res) => {
     const { codigoempresa, idempleado } = req.body;

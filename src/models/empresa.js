@@ -17,12 +17,14 @@ const Empresa = {
         const query = 'CALL DeleteEmpresa(?)';
         db.query(query, [codigoempresa], callback);
     },
-
+    findByAdminId: (idadministrador, callback) => {
+        const query = 'CALL GetEmpresasByAdmin(?)';
+        db.query(query, [idadministrador], callback);
+    },
     linkEmpleadoToEmpresa: (codigoempresa, idempleado, callback) => {
         const query = 'CALL LinkEmpleadoToEmpresa(?, ?)';
         db.query(query, [codigoempresa, idempleado], callback);
     },
-
     unlinkEmpleadoFromEmpresa: (codigoempresa, idempleado, callback) => {
         const query = 'CALL UnlinkEmpleadoFromEmpresa(?, ?)';
         db.query(query, [codigoempresa, idempleado], callback);

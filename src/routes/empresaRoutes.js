@@ -17,6 +17,12 @@ router.get('/consultar/:codigoempresa', (req, res) => {
     empresaController.getEmpresa(req, res);
 });
 
+// Ruta para obtener todas las empresas creadas por un administrador específico
+router.get('/consultarPorAdministrador/:idadministrador', (req, res) => {
+    console.log('GET /consultarPorAdministrador/:idadministrador');
+    empresaController.getEmpresasByAdmin(req, res);
+});
+
 // Ruta para actualizar una empresa existente
 router.put('/actualizar/:codigoempresa', (req, res) => {
     console.log('PUT /actualizar/:codigoempresa');
