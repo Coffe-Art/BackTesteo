@@ -8,7 +8,7 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
-const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal) => {
+const register = async (tipoUsuario, nombre, historia, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal) => {
     try {
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -21,8 +21,8 @@ const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccio
 
         switch (tipoUsuarioLower) {
             case 'administrador':
-                procedure = 'CALL CreateAdministrador(?, ?, ?, ?)';
-                params = [nombre, hashedPassword, correo_electronico, telefono];
+                procedure = 'CALL CreateAdministrador(?, ?, ?, ?, ?)';
+                params = [nombre, historia, hashedPassword, correo_electronico, telefono];
                 break;
             case 'empleado':
                 procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?, ?, ?)';

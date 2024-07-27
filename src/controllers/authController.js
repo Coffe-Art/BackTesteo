@@ -7,7 +7,7 @@ const authService = require('../services/authService');
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
-        const { tipoUsuario, nombre, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal } = req.body;
+        const { tipoUsuario, nombre, nombreUsuario, historia, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal } = req.body;
 
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -20,7 +20,7 @@ const register = async (req, res) => {
         switch (tipoUsuarioLower) {
             case 'administrador':
                 result = await new Promise((resolve, reject) => {
-                    Administrador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                    Administrador.create(nombre, historia, hashedPassword, correo_electronico, telefono, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -71,3 +71,4 @@ const login = async (req, res) => {
 };
 
 module.exports = { register, login };
+
