@@ -4,7 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes'); 
-const insumoRoutes = require('./src/routes/insumosRoutes'); 
+const insumoRoutes = require('./src/routes/insumoRoutes'); 
+const productoRoutes = require('./src/routes/productosRoutes'); // Importar rutas de productos
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/empresa', empresaRoutes);
 app.use('/api/insumo', insumoRoutes); 
+app.use('/api/producto', productoRoutes); // Registrar rutas de productos
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
