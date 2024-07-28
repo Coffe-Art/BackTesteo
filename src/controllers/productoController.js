@@ -1,4 +1,4 @@
-const Producto = require('../models/producto');
+const Producto = require('../models/productos');
 
 // Controlador para crear un nuevo producto
 exports.createProducto = (req, res) => {
