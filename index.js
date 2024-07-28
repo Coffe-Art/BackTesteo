@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes'); 
-const insumoRoutes = require('./src/routes/insumoRoutes'); 
+const insumoRoutes = require('./src/routes/insumosRoutes'); 
 const productoRoutes = require('./src/routes/productosRoutes'); // Importar rutas de productos
 
 const app = express();
