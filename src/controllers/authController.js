@@ -28,7 +28,8 @@ const register = async (req, res) => {
                 break;
             case 'empleado':
                 result = await new Promise((resolve, reject) => {
-                    Empleado.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                    // El campo `estado` y `permisos` se establecerán como `null` si no se proporcionan
+                    Empleado.create(nombre, hashedPassword, null, telefono, null, correo_electronico, req.body.idAdministrador, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -71,4 +72,3 @@ const login = async (req, res) => {
 };
 
 module.exports = { register, login };
-
