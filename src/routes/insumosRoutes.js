@@ -29,10 +29,10 @@ router.delete('/eliminar/:idInsumo', (req, res) => {
     insumoController.deleteInsumo(req, res);
 });
 
-// Ruta para obtener todos los insumos de un usuario
-router.get('/insumosPorUsuario/:idUsuario', (req, res) => {
-    console.log('GET /insumosPorUsuario/:idUsuario');
-    insumoController.getInsumosByUser(req, res);
+// Ruta para obtener todos los insumos de una empresa específica
+router.get('/insumosPorEmpresa/:codigoempresa', (req, res) => {
+    console.log('GET /insumosPorEmpresa/:codigoempresa');
+    insumoController.getInsumosByEmpresa(req, res);
 });
 
 module.exports = router;

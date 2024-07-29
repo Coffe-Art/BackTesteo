@@ -17,9 +17,9 @@ const Insumo = {
     const query = 'CALL DeleteInsumo(?)';
     db.query(query, [IdInsumo], callback);
   },
-  findByUser: (IdUsuario, callback) => {
-    const query = 'CALL GetInsumosByUser(?)';
-    db.query(query, [IdUsuario], callback);
+  findByEmpresa: (codigoempresa, callback) => {
+    const query = 'CALL GetInsumosByEmpresa(?)';
+    db.query(query, [codigoempresa], callback);
   }
 };
 

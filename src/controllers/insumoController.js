@@ -1,11 +1,10 @@
 const Insumo = require('../models/insumos');
 
-
 // Controlador para crear un nuevo insumo
 exports.createInsumo = (req, res) => {
     const { Nombre, precioUnitario, precioPorKilo, descripcion, lugarDeVenta, correoContacto, TelefonoContacto, TipoDeVenta, IdUsuario } = req.body;
     console.log('Datos recibidos:', Nombre, precioUnitario, precioPorKilo, descripcion, lugarDeVenta, correoContacto, TelefonoContacto, TipoDeVenta, IdUsuario);
-    
+
     Insumo.create(Nombre, precioUnitario, precioPorKilo, descripcion, lugarDeVenta, correoContacto, TelefonoContacto, TipoDeVenta, IdUsuario, (err, result) => {
         if (err) {
             console.error('Error al crear insumo:', err);
@@ -25,7 +24,7 @@ exports.getInsumo = (req, res) => {
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
             if (insumo && insumo.length > 0) {
-                res.status(200).json(insumo[0]); 
+                res.status(200).json(insumo[0]);
             } else {
                 res.status(404).json({ error: 'Insumo no encontrado' });
             }
@@ -37,7 +36,7 @@ exports.getInsumo = (req, res) => {
 exports.updateInsumo = (req, res) => {
     const idInsumo = req.params.idInsumo;
     const { Nombre, precioUnitario, precioPorKilo, descripcion, lugarDeVenta, correoContacto, TelefonoContacto, TipoDeVenta, IdUsuario } = req.body;
-    
+
     Insumo.update(idInsumo, Nombre, precioUnitario, precioPorKilo, descripcion, lugarDeVenta, correoContacto, TelefonoContacto, TipoDeVenta, IdUsuario, (err, result) => {
         if (err) {
             console.error('Error al actualizar insumo:', err);
@@ -61,10 +60,10 @@ exports.deleteInsumo = (req, res) => {
     });
 };
 
-// Controlador para obtener todos los insumos de un usuario específico
-exports.getInsumosByUser = (req, res) => {
-    const idUsuario = req.params.idUsuario;
-    Insumo.findByUser(idUsuario, (err, insumos) => {
+// Controlador para obtener todos los insumos de una empresa específica
+exports.getInsumosByEmpresa = (req, res) => {
+    const codigoempresa = req.params.codigoempresa;
+    Insumo.findByEmpresa(codigoempresa, (err, insumos) => {
         if (err) {
             console.error('Error al obtener insumos:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
