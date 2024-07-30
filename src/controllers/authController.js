@@ -7,7 +7,7 @@ const authService = require('../services/authService');
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
-        const { tipoUsuario, nombre, nombreUsuario, historia, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal } = req.body;
+        const { tipoUsuario, nombre, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal, idAdministrador } = req.body;
 
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -20,7 +20,7 @@ const register = async (req, res) => {
         switch (tipoUsuarioLower) {
             case 'administrador':
                 result = await new Promise((resolve, reject) => {
-                    Administrador.create(nombre, historia, hashedPassword, correo_electronico, telefono, (err) => {
+                    Administrador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -29,7 +29,7 @@ const register = async (req, res) => {
             case 'empleado':
                 result = await new Promise((resolve, reject) => {
                     // El campo `estado` y `permisos` se establecerán como `null` si no se proporcionan
-                    Empleado.create(nombre, hashedPassword, null, telefono, null, correo_electronico, req.body.idAdministrador, (err) => {
+                    Empleado.create(nombre, hashedPassword, null, telefono, null, correo_electronico, idAdministrador, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -37,7 +37,7 @@ const register = async (req, res) => {
                 break;
             case 'comprador':
                 result = await new Promise((resolve, reject) => {
-                    Comprador.create(nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico, (err) => {
+                    Comprador.create(nombre, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
