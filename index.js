@@ -15,7 +15,8 @@ app.use(cors({
     origin: '*', // Permite todos los orígenes
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use('/api/auth', authRoutes);
