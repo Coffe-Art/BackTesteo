@@ -29,8 +29,8 @@ const register = async (tipoUsuario, nombre, contrasena, direccion, ciudad, corr
                 params = [nombre, hashedPassword, null, telefono, null, correo_electronico, idAdministrador];
                 break;
             case 'comprador':
-                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
-                params = [nombre, null, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico];
+                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?)';
+                params = [nombre, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico];
                 break;
             default:
                 throw new Error('Tipo de usuario no válido');
