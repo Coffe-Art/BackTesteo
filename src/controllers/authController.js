@@ -4,6 +4,8 @@ const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
 
+
+
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
@@ -28,7 +30,6 @@ const register = async (req, res) => {
                 break;
             case 'empleado':
                 result = await new Promise((resolve, reject) => {
-                    // El campo `estado` y `permisos` se establecerán como `null` si no se proporcionan
                     Empleado.create(nombre, hashedPassword, null, telefono, null, correo_electronico, idAdministrador, (err) => {
                         if (err) reject(err);
                         else resolve();
@@ -53,6 +54,7 @@ const register = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 const login = async (req, res) => {
     try {

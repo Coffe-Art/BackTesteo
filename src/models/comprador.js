@@ -16,3 +16,4 @@ const Comprador = {
 };
 
 module.exports = Comprador;
+
