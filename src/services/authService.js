@@ -8,7 +8,7 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
-const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigoPostal, historia, idAdministrador) => {
+const register = async (tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia, idAdministrador) => {
     try {
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -29,8 +29,8 @@ const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccio
                 params = [nombre, hashedPassword, correo_electronico, telefono, idAdministrador];
                 break;
             case 'comprador':
-                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
-                params = [nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigoPostal, telefono, correo_electronico];
+                procedure = 'CALL CreateComprador(?, ?, ?, ?)';
+                params = [nombre, hashedPassword, telefono, correo_electronico];
                 break;
             default:
                 throw new Error('Tipo de usuario no válido');
@@ -43,6 +43,9 @@ const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccio
         throw err;
     }
 };
+
+
+
 
 const login = async (tipoUsuario, correo_electronico, contrasena) => {
     try {
@@ -95,3 +98,5 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
 };
 
 module.exports = { register, login };
+
+
