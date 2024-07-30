@@ -8,7 +8,7 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
-const register = async (tipoUsuario, nombre, contrasena, direccion, ciudad, correo_electronico, telefono, codigopostal, idAdministrador) => {
+const register = async (tipoUsuario, nombre, nombreUsuario, contrasena, direccion, ciudad, correo_electronico, telefono, codigoPostal, historia, idAdministrador) => {
     try {
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -22,15 +22,15 @@ const register = async (tipoUsuario, nombre, contrasena, direccion, ciudad, corr
         switch (tipoUsuarioLower) {
             case 'administrador':
                 procedure = 'CALL CreateAdministrador(?, ?, ?, ?, ?)';
-                params = [nombre, hashedPassword, correo_electronico, telefono, idAdministrador];
+                params = [nombre, historia, hashedPassword, correo_electronico, telefono];
                 break;
             case 'empleado':
-                procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?, ?, ?)';
-                params = [nombre, hashedPassword, null, telefono, null, correo_electronico, idAdministrador];
+                procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?)';
+                params = [nombre, hashedPassword, correo_electronico, telefono, idAdministrador];
                 break;
             case 'comprador':
-                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?)';
-                params = [nombre, hashedPassword, direccion, ciudad, codigopostal, telefono, correo_electronico];
+                procedure = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
+                params = [nombre, nombreUsuario, hashedPassword, direccion, ciudad, codigoPostal, telefono, correo_electronico];
                 break;
             default:
                 throw new Error('Tipo de usuario no válido');
@@ -55,11 +55,11 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         switch (tipoUsuarioLower) {
             case 'administrador':
                 table = 'administrador';
-                idField = 'idAdministrador';
+                idField = 'idadministrador';
                 break;
             case 'empleado':
                 table = 'empleado';
-                idField = 'idEmpleado';
+                idField = 'idempleado';
                 break;
             case 'comprador':
                 table = 'comprador';

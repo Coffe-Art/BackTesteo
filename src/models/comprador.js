@@ -1,3 +1,4 @@
+// src/models/comprador.js
 const db = require('../utils/db');
 
 const Comprador = {
@@ -5,9 +6,13 @@ const Comprador = {
         const query = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?)';
         db.query(query, [nombre, contrasena, direccion, ciudad, codigoPostal, telefono, correo_electronico], callback);
     },
-    findByEmail: (email, callback) => {
-        const query = 'SELECT * FROM comprador WHERE correo_electronico = ?';
-        db.query(query, [email], callback);
+    deleteById: (idComprador, callback) => {
+        const query = 'CALL DeleteComprador(?)';
+        db.query(query, [idComprador], callback);
+    },
+    findById: (idComprador, callback) => {
+        const query = 'CALL ReadComprador(?)';
+        db.query(query, [idComprador], callback);
     },
     update: (idComprador, updates, callback) => {
         const query = 'CALL UpdateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
@@ -16,4 +21,3 @@ const Comprador = {
 };
 
 module.exports = Comprador;
-
