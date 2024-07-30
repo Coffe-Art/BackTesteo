@@ -4,10 +4,11 @@ const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
 
+
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
-        const { tipoUsuario, nombre, historia, contrasena, direccion, ciudad, correo_electronico, telefono, codigoPostal } = req.body;
+        const { tipoUsuario, nombre, contrasena, correo_electronico, telefono, direccion, ciudad, codigoPostal } = req.body;
 
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -20,7 +21,7 @@ const register = async (req, res) => {
         switch (tipoUsuarioLower) {
             case 'administrador':
                 result = await new Promise((resolve, reject) => {
-                    Administrador.create(nombre, historia, hashedPassword, correo_electronico, telefono, (err) => {
+                    Administrador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -35,8 +36,9 @@ const register = async (req, res) => {
                 });
                 break;
             case 'comprador':
+                // Enviar solo los parámetros necesarios para el procedimiento almacenado
                 result = await new Promise((resolve, reject) => {
-                    Comprador.create(nombre, hashedPassword, direccion, ciudad, codigoPostal, telefono, correo_electronico, (err) => {
+                    Comprador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
