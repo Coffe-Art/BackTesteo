@@ -4,10 +4,16 @@ const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
 
+
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
         const { tipoUsuario, nombre, contrasena, correo_electronico, telefono } = req.body;
+
+        // Validación de datos
+        if (!tipoUsuario || !nombre || !contrasena || !correo_electronico || !telefono) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
 
         // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
@@ -53,6 +59,7 @@ const register = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 
 const login = async (req, res) => {
     try {
