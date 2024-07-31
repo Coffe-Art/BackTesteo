@@ -8,7 +8,7 @@ const authService = require('../services/authService');
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
-        const { tipoUsuario, nombre, contrasena, correo_electronico, telefono } = req.body;
+        const { tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia } = req.body;
 
         // Validación de datos
         if (!tipoUsuario || !nombre || !contrasena || !correo_electronico || !telefono) {
@@ -26,7 +26,7 @@ const register = async (req, res) => {
         switch (tipoUsuarioLower) {
             case 'administrador':
                 result = await new Promise((resolve, reject) => {
-                    Administrador.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                    Administrador.create(nombre, historia || null, hashedPassword, correo_electronico, telefono, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -41,7 +41,6 @@ const register = async (req, res) => {
                 });
                 break;
             case 'comprador':
-                // Enviar solo los parámetros necesarios para el procedimiento almacenado
                 result = await new Promise((resolve, reject) => {
                     Comprador.create(nombre, hashedPassword, telefono, correo_electronico, (err) => {
                         if (err) reject(err);
@@ -59,7 +58,6 @@ const register = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
-
 
 const login = async (req, res) => {
     try {

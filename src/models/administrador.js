@@ -3,8 +3,9 @@ const db = require('../utils/db');
 
 const Administrador = {
     create: (nombre, historia, contrasena, correo_electronico, telefono, callback) => {
+        // Cambiar la consulta para que `historia` pueda ser NULL
         const query = 'CALL CreateAdministrador(?, ?, ?, ?, ?)';
-        db.query(query, [nombre, historia, contrasena, correo_electronico, telefono], callback);
+        db.query(query, [nombre, historia || null, contrasena, correo_electronico, telefono], callback);
     },
     deleteById: (idadministrador, callback) => {
         const query = 'CALL DeleteAdministrador(?)';

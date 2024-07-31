@@ -8,6 +8,8 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
+
+
 const register = async (tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia, idAdministrador) => {
     try {
         // Convertir tipoUsuario a minúsculas
@@ -22,7 +24,7 @@ const register = async (tipoUsuario, nombre, contrasena, correo_electronico, tel
         switch (tipoUsuarioLower) {
             case 'administrador':
                 procedure = 'CALL CreateAdministrador(?, ?, ?, ?, ?)';
-                params = [nombre, historia, hashedPassword, correo_electronico, telefono];
+                params = [nombre, historia || null, hashedPassword, correo_electronico, telefono];
                 break;
             case 'empleado':
                 procedure = 'CALL CreateEmpleado(?, ?, ?, ?, ?)';
@@ -63,7 +65,7 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
                 break;
             case 'comprador':
                 table = 'comprador';
-                idField = 'idcomprador'; // Asegúrate de que coincida con el nombre del campo en la base de datos
+                idField = 'idcomprador';
                 break;
             default:
                 throw new Error('Tipo de usuario no válido');
