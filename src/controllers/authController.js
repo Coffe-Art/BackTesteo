@@ -5,6 +5,7 @@ const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
 
 
+
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
@@ -75,5 +76,6 @@ const login = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
 
 module.exports = { register, login };

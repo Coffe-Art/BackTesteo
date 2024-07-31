@@ -8,8 +8,6 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
-
-
 const register = async (tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia, idAdministrador) => {
     try {
         // Convertir tipoUsuario a minúsculas
@@ -42,7 +40,7 @@ const register = async (tipoUsuario, nombre, contrasena, correo_electronico, tel
         await query(procedure, params);
     } catch (err) {
         console.error('Error en el registro:', err.message);
-        throw err;
+        throw new Error('Error al registrar usuario: ' + err.message);
     }
 };
 
@@ -92,7 +90,7 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         return token;
     } catch (err) {
         console.error('Error en el login:', err.message);
-        throw err;
+        throw new Error('Error al iniciar sesión: ' + err.message);
     }
 };
 
