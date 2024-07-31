@@ -2,9 +2,9 @@
 const db = require('../utils/db');
 
 const Comprador = {
-    create: (nombre, contrasena, direccion, ciudad, codigoPostal, telefono, correo_electronico, callback) => {
-        const query = 'CALL CreateComprador(?, ?, ?, ?, ?, ?, ?)';
-        db.query(query, [nombre, contrasena, direccion, ciudad, codigoPostal, telefono, correo_electronico], callback);
+    create: (nombre, contrasena, telefono, correo_electronico, callback) => {
+        const query = 'CALL CreateComprador(?, ?, ?, ?)';
+        db.query(query, [nombre, contrasena, telefono, correo_electronico], callback);
     },
     deleteById: (idComprador, callback) => {
         const query = 'CALL DeleteComprador(?)';
@@ -15,8 +15,8 @@ const Comprador = {
         db.query(query, [idComprador], callback);
     },
     update: (idComprador, updates, callback) => {
-        const query = 'CALL UpdateComprador(?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(query, [idComprador, updates.nombre, updates.contrasena, updates.direccion, updates.ciudad, updates.codigoPostal, updates.telefono, updates.correo_electronico], callback);
+        const query = 'CALL UpdateComprador(?, ?, ?, ?, ?)';
+        db.query(query, [idComprador, updates.nombre, updates.contrasena, updates.telefono, updates.correo_electronico], callback);
     }
 };
 

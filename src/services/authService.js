@@ -44,9 +44,6 @@ const register = async (tipoUsuario, nombre, contrasena, correo_electronico, tel
     }
 };
 
-
-
-
 const login = async (tipoUsuario, correo_electronico, contrasena) => {
     try {
         // Convertir tipoUsuario a minúsculas
@@ -66,7 +63,7 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
                 break;
             case 'comprador':
                 table = 'comprador';
-                idField = 'idComprador';
+                idField = 'idcomprador'; // Asegúrate de que coincida con el nombre del campo en la base de datos
                 break;
             default:
                 throw new Error('Tipo de usuario no válido');
@@ -98,5 +95,3 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
 };
 
 module.exports = { register, login };
-
-
