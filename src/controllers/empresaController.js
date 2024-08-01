@@ -10,10 +10,11 @@ exports.createEmpresa = (req, res) => {
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
             console.log('Resultado de la creación:', result);
-            res.status(200).json({ message: 'Empresa creada exitosamente', id: result[0][0].id });
+            res.status(200).json({ message: 'Empresa creada exitosamente', id: result[0][0].codigoempresa });
         }
     });
 };
+
 // Controlador para obtener detalles de una empresa por su código
 exports.getEmpresa = (req, res) => {
     const codigoempresa = req.params.codigoempresa;
@@ -75,28 +76,6 @@ exports.getEmpresasByAdmin = (req, res) => {
     });
 };
 
-// Controlador para vincular un empleado a una empresa
-exports.linkEmpleadoToEmpresa = (req, res) => {
-    const { codigoempresa, idempleado } = req.body;
-    Empresa.linkEmpleadoToEmpresa(codigoempresa, idempleado, (err, result) => {
-        if (err) {
-            console.error('Error al vincular empleado a empresa:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.status(200).json({ message: 'Empleado vinculado a empresa exitosamente' });
-        }
-    });
-};
+// Los siguientes métodos de vinculación y desvinculación han sido eliminados,
+// ya que los procedimientos almacenados correspondientes no están definidos en el modelo.
 
-// Controlador para desvincular un empleado de una empresa
-exports.unlinkEmpleadoFromEmpresa = (req, res) => {
-    const { codigoempresa, idempleado } = req.body;
-    Empresa.unlinkEmpleadoFromEmpresa(codigoempresa, idempleado, (err, result) => {
-        if (err) {
-            console.error('Error al desvincular empleado de empresa:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.status(200).json({ message: 'Empleado desvinculado de empresa exitosamente' });
-        }
-    });
-};

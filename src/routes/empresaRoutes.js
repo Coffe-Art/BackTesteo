@@ -35,16 +35,4 @@ router.delete('/eliminar/:codigoempresa', (req, res) => {
     empresaController.deleteEmpresa(req, res);
 });
 
-// Ruta para vincular un empleado a una empresa
-router.post('/vincularEmpleado', (req, res) => {
-    console.log('POST /vincularEmpleado');
-    empresaController.linkEmpleadoToEmpresa(req, res);
-});
-
-// Ruta para desvincular un empleado de una empresa
-router.post('/desvincularEmpleado', (req, res) => {
-    console.log('POST /desvincularEmpleado');
-    empresaController.unlinkEmpleadoFromEmpresa(req, res);
-});
-
 module.exports = router;

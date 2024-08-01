@@ -10,7 +10,7 @@ const productoRoutes = require('./src/routes/productosRoutes'); // Importar ruta
 const app = express();
 app.use(express.json());
 
-// Configurar CORS
+
 app.use(cors({
     origin: '*', // Permite todos los orígenes
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
