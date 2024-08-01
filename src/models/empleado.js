@@ -2,17 +2,17 @@
 const db = require('../utils/db');
 
 const Empleado = {
-    create: (nombre, contrasena, correo_electronico, telefono, callback) => {
-        const query = 'INSERT INTO empleado (nombre, contrasena, correo_electronico, telefono) VALUES (COALESCE(?, nombre), COALESCE(?, contrasena), COALESCE(?, correo_electronico), COALESCE(?, telefono))';
-        db.query(query, [nombre, contrasena, correo_electronico, telefono], callback);
+    create: (nombre, contrasena, estado, telefono, permisos, correo_electronico, idAdministrador, callback) => {
+        const query = 'CALL CreateEmpleado(?, ?, ?, ?, ?, ?, ?)';
+        db.query(query, [nombre, contrasena, estado, telefono, permisos, correo_electronico, idAdministrador], callback);
     },
-    findByEmail: (email, callback) => {
+    update: (idempleado, contrasena, nombre, estado, telefono, permisos, correo_electronico, idAdministrador, callback) => {
+        const query = 'CALL UpdateEmpleado(?, ?, ?, ?, ?, ?, ?, ?)';
+        db.query(query, [idempleado, contrasena, nombre, estado, telefono, permisos, correo_electronico, idAdministrador], callback);
+    },
+    findByEmail: (correo_electronico, callback) => {
         const query = 'SELECT * FROM empleado WHERE correo_electronico = ?';
-        db.query(query, [email], callback);
-    },
-    update: (email, updates, callback) => {
-        const query = 'UPDATE empleado SET nombre = COALESCE(?, nombre), contrasena = COALESCE(?, contrasena), telefono = COALESCE(?, telefono) WHERE correo_electronico = ?';
-        db.query(query, [updates.nombre, updates.contrasena, updates.telefono, email], callback);
+        db.query(query, [correo_electronico], callback);
     }
 };
 

@@ -4,12 +4,10 @@ const Comprador = require('../models/comprador');
 const Empleado = require('../models/empleado');
 const authService = require('../services/authService');
 
-
-
 const register = async (req, res) => {
     try {
         console.log("Register endpoint hit");
-        const { tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia } = req.body;
+        const { tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia, estado, permisos, idAdministrador } = req.body;
 
         // Validación de datos
         if (!tipoUsuario || !nombre || !contrasena || !correo_electronico || !telefono) {
@@ -35,7 +33,7 @@ const register = async (req, res) => {
                 break;
             case 'empleado':
                 result = await new Promise((resolve, reject) => {
-                    Empleado.create(nombre, hashedPassword, correo_electronico, telefono, (err) => {
+                    Empleado.create(nombre, hashedPassword, estado, telefono, permisos, correo_electronico, idAdministrador, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
@@ -76,6 +74,5 @@ const login = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
-
 
 module.exports = { register, login };
