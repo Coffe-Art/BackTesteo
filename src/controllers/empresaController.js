@@ -9,11 +9,11 @@ exports.createEmpresa = (req, res) => {
             console.error('Error al crear empresa:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
-            res.status(200).json({ message: 'Empresa creada exitosamente', id: result.insertId });
+            console.log('Resultado de la creación:', result);
+            res.status(200).json({ message: 'Empresa creada exitosamente', id: result[0][0].id });
         }
     });
 };
-
 // Controlador para obtener detalles de una empresa por su código
 exports.getEmpresa = (req, res) => {
     const codigoempresa = req.params.codigoempresa;

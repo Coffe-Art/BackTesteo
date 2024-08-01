@@ -22,7 +22,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/empresa', empresaRoutes);
 app.use('/api/insumo', insumoRoutes); 
-app.use('/api/producto', productoRoutes); // Registrar rutas de productos
+app.use('/api/producto', productoRoutes); 
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
