@@ -1,22 +1,62 @@
-const db = require('../utils/db');
+const Producto = require('../models/productos');
 
-const Producto = {
-  create: (materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, callback) => {
-    const query = 'CALL CreateProducto(?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa], callback);
-  },
-  findById: (idProducto, callback) => {
-    const query = 'CALL ReadProducto(?)';
-    db.query(query, [idProducto], callback);
-  },
-  update: (idProducto, materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, callback) => {
-    const query = 'CALL UpdateProducto(?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [idProducto, materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa], callback);
-  },
-  delete: (idProducto, callback) => {
-    const query = 'CALL DeleteProducto(?)';
-    db.query(query, [idProducto], callback);
-  }
+// Controlador para crear un nuevo producto
+exports.createProducto = (req, res) => {
+    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
+    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
+
+    Producto.create(materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
+        if (err) {
+            console.error('Error al crear producto:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            res.status(201).json({ message: 'Producto creado exitosamente', id: result.insertId });
+        }
+    });
 };
 
-module.exports = Producto;
+// Controlador para obtener detalles de un producto por su ID
+exports.getProducto = (req, res) => {
+    const idProducto = req.params.idProducto;
+    Producto.findById(idProducto, (err, producto) => {
+        if (err) {
+            console.error('Error al obtener producto:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            if (producto && producto.length > 0) {
+                res.status(200).json(producto[0]);
+            } else {
+                res.status(404).json({ error: 'Producto no encontrado' });
+            }
+        }
+    });
+};
+
+// Controlador para actualizar un producto existente
+exports.updateProducto = (req, res) => {
+    const idProducto = req.params.idProducto;
+    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
+    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
+
+    Producto.update(idProducto, materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar producto:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            res.status(200).json({ message: 'Producto actualizado exitosamente' });
+        }
+    });
+};
+
+// Controlador para eliminar un producto
+exports.deleteProducto = (req, res) => {
+    const idProducto = req.params.idProducto;
+    Producto.delete(idProducto, (err, result) => {
+        if (err) {
+            console.error('Error al eliminar producto:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            res.status(200).json({ message: 'Producto eliminado exitosamente' });
+        }
+    });
+};

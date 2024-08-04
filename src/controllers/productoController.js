@@ -2,8 +2,8 @@ const Producto = require('../models/productos');
 
 // Controlador para crear un nuevo producto
 exports.createProducto = (req, res) => {
-    const { materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa } = req.body;
-    console.log('Datos recibidos:', materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa);
+    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
+    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
 
     Producto.create(materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
         if (err) {
@@ -35,7 +35,8 @@ exports.getProducto = (req, res) => {
 // Controlador para actualizar un producto existente
 exports.updateProducto = (req, res) => {
     const idProducto = req.params.idProducto;
-    const { materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa } = req.body;
+    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
+    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
 
     Producto.update(idProducto, materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
         if (err) {
@@ -59,4 +60,3 @@ exports.deleteProducto = (req, res) => {
         }
     });
 };
-
