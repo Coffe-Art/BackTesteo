@@ -1,62 +1,43 @@
-const Producto = require('../models/productos');
+const db = require('../utils/db'); // Asegúrate de ajustar la ruta a tu archivo de conexión a la base de datos
 
-// Controlador para crear un nuevo producto
-exports.createProducto = (req, res) => {
-    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
-    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
+const Producto = {};
 
-    Producto.create(materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
-        if (err) {
-            console.error('Error al crear producto:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.status(201).json({ message: 'Producto creado exitosamente', id: result.insertId });
-        }
-    });
+// Crear producto
+Producto.create = (materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, callback) => {
+    const query = `CALL CreateProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador];
+    db.query(query, values, callback);
 };
 
-// Controlador para obtener detalles de un producto por su ID
-exports.getProducto = (req, res) => {
-    const idProducto = req.params.idProducto;
-    Producto.findById(idProducto, (err, producto) => {
-        if (err) {
-            console.error('Error al obtener producto:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            if (producto && producto.length > 0) {
-                res.status(200).json(producto[0]);
-            } else {
-                res.status(404).json({ error: 'Producto no encontrado' });
-            }
-        }
-    });
+// Obtener producto por ID
+Producto.findById = (idProducto, callback) => {
+    const query = `SELECT * FROM productos WHERE idProducto = ?`;
+    db.query(query, [idProducto], callback);
 };
 
-// Controlador para actualizar un producto existente
-exports.updateProducto = (req, res) => {
-    const idProducto = req.params.idProducto;
-    const { materiales, nombre, precio, descripcion, cantidad, publicadoPor, codigoempresa } = req.body;
-    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
-
-    Producto.update(idProducto, materiales, nombre, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, (err, result) => {
-        if (err) {
-            console.error('Error al actualizar producto:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.status(200).json({ message: 'Producto actualizado exitosamente' });
-        }
-    });
+// Obtener productos por idAdministrador
+Producto.findByIdAdministrador = (idAdministrador, callback) => {
+    const query = `CALL GetProductosByIdAdministrador(?)`;
+    db.query(query, [idAdministrador], callback);
 };
 
-// Controlador para eliminar un producto
-exports.deleteProducto = (req, res) => {
-    const idProducto = req.params.idProducto;
-    Producto.delete(idProducto, (err, result) => {
-        if (err) {
-            console.error('Error al eliminar producto:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            res.status(200).json({ message: 'Producto eliminado exitosamente' });
-        }
-    });
+// Obtener productos por codigoEmpresa
+Producto.findByCodigoEmpresa = (codigoempresa, callback) => {
+    const query = `CALL GetProductosByCodigoEmpresa(?)`;
+    db.query(query, [codigoempresa], callback);
 };
+
+// Actualizar producto
+Producto.update = (idProducto, materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, callback) => {
+    const query = `CALL UpdateProducto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [idProducto, materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador];
+    db.query(query, values, callback);
+};
+
+// Eliminar producto
+Producto.delete = (idProducto, callback) => {
+    const query = `DELETE FROM productos WHERE idProducto = ?`;
+    db.query(query, [idProducto], callback);
+};
+
+module.exports = Producto;
