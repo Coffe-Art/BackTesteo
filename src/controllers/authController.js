@@ -1,3 +1,4 @@
+require('dotenv').config(); // Carga las variables de entorno
 const bcrypt = require('bcrypt');
 const Administrador = require('../models/administrador');
 const Comprador = require('../models/comprador');

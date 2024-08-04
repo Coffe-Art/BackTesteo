@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Carga las variables de entorno
 console.log('JWT_SECRET in authService:', process.env.JWT_SECRET); // Verifica que se cargue la variable
 
 const bcrypt = require('bcrypt');
