@@ -3,23 +3,25 @@ const multer = require('multer');
 const path = require('path');
 
 const app = express();
-const upload = multer({ dest: 'uploads/' }); // Carpeta para guardar las imágenes
+const upload = multer({ dest: 'uploads/' }).single('urlProductoImg');
 
-app.post('/nuevoProducto', upload.single('urlProductoImg'), async (req, res) => {
-  try {
-    const { materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador } = req.body;
-    const imagen = req.file; // La imagen cargada
+app.post('/nuevoProducto', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            console.error('Error al cargar el archivo:', err);
+            return res.status(500).json({ error: 'Error al cargar el archivo' });
+        }
 
-    if (!nombre || !precio) {
-      return res.status(400).json({ error: 'Datos incompletos' });
-    }
+        const { materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador } = req.body;
+        const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // Aquí iría tu lógica para guardar el producto y los datos de la imagen
-    // await crearProductoEnBaseDeDatos({ materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador, imagen: imagen.path });
+        if (!nombre || !precio) {
+            return res.status(400).json({ error: 'Datos incompletos' });
+        }
 
-    res.status(201).json({ mensaje: 'Producto creado con éxito', imagen: imagen.path });
-  } catch (error) {
-    console.error('Error creando producto:', error);
-    res.status(500).json({ error: 'Error al crear el producto' });
-  }
+        // Aquí iría tu lógica para guardar el producto y los datos de la imagen
+        // await crearProductoEnBaseDeDatos({ materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador, imagen: urlProductoImg });
+
+        res.status(201).json({ mensaje: 'Producto creado con éxito', imagen: urlProductoImg });
+    });
 });
