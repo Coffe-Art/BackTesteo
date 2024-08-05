@@ -19,7 +19,18 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    limits: { fileSize: 1024 * 1024 * 2 }, // Límite de 2MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Tipo de archivo no permitido'), false);
+        }
+    }
+});
 
 console.log('Registering producto routes');
 
@@ -28,6 +39,8 @@ router.post('/nuevoProducto', upload.single('productoImg'), (req, res) => {
     console.log('POST /nuevoProducto');
     productoController.createProducto(req, res);
 });
+
+
 
 // Ruta para obtener detalles de un producto específico
 router.get('/consultar/:idProducto', (req, res) => {
@@ -52,6 +65,7 @@ router.put('/actualizar/:idProducto', upload.single('productoImg'), (req, res) =
     console.log('PUT /actualizar/:idProducto');
     productoController.updateProducto(req, res);
 });
+
 
 // Ruta para eliminar un producto
 router.delete('/eliminar/:idProducto', (req, res) => {
