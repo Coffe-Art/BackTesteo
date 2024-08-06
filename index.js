@@ -3,6 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const helmet = require('helmet');  // Agregar esta línea
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes'); 
 const insumoRoutes = require('./src/routes/insumosRoutes'); 
@@ -37,11 +38,22 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// Configuración de Content Security Policy usando Helmet
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'http://localhost:3000'],
+        scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+        styleSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+        connectSrc: ["'self'"],
+    }
+}));
+
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/empresa', empresaRoutes);
 app.use('/api/insumo', insumoRoutes); 
-app.use('/api/producto', upload.single('imagen'), productoRoutes); 
+app.use('/api/producto', productoRoutes); 
 
 // Servir archivos estáticos
 app.use('/uploads', express.static('uploads'));

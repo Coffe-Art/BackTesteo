@@ -24,6 +24,12 @@ function createPool() {
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
       console.log('Attempting to reconnect...');
       createPool();
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('Connection refused. Exiting process.');
+      process.exit(1);
+    } else if (err.code === 'ER_CON_COUNT_ERROR') {
+      console.error('Too many connections. Exiting process.');
+      process.exit(1);
     } else {
       console.error('Unhandled error:', err);
       process.exit(1);
