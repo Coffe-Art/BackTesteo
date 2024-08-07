@@ -1,33 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const helmet = require('helmet');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes'); 
 const insumoRoutes = require('./src/routes/insumosRoutes'); 
 const productoRoutes = require('./src/routes/productosRoutes'); 
+const upload = require('./src/config/uploadConfig'); // Importar configuración de multer
 
 const app = express();
-
-// Configuración de Multer
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      const uploadDir = path.join(__dirname, 'uploads');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir);
-      }
-      cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      cb(null, `${Date.now()}${ext}`);
-    }
-  }),
-  limits: { fileSize: 10 * 1024 * 1024 } // Limitar a 10 MB
-});
 
 app.use(express.json());
 
@@ -42,9 +22,6 @@ app.use(cors({
 // Middleware para agregar la cabecera Access-Control-Allow-Origin
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
   next();
 });
 
