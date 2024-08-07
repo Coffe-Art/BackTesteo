@@ -40,14 +40,14 @@ app.use(cors({
 
 // Configuración de Content Security Policy usando Helmet
 app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https://backtesteo.onrender.com', 'http://localhost:3000'],
-        scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
-        styleSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
-        connectSrc: ["'self'"],
-        // Añadir otras directivas según sea necesario
-    }
+  directives: {
+      defaultSrc: ["'self'"], // Permitir solo el mismo origen por defecto
+      imgSrc: ["'self'", 'data:', 'https://backtesteo.onrender.com'], // Permitir imágenes desde el mismo origen, data URLs, y el dominio de tu favicon
+      scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'], // Permitir scripts desde el mismo origen y CDNs
+      styleSrc: ["'self'", 'https://cdnjs.cloudflare.com'], // Permitir estilos desde el mismo origen y CDNs
+      connectSrc: ["'self'"], // Permitir conexiones solo desde el mismo origen
+      // Añadir otras directivas según sea necesario
+  }
 }));
 
 // Rutas
