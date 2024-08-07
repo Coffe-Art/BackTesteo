@@ -39,6 +39,12 @@ app.use(cors({
     optionsSuccessStatus: 204,
 }));
 
+// Middleware para agregar la cabecera Access-Control-Allow-Origin
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 // Configuración de Content Security Policy usando Helmet
 app.use(helmet({
   contentSecurityPolicy: false, // Desactiva CSP para simplificar pruebas
