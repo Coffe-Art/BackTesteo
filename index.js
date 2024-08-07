@@ -3,7 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const helmet = require('helmet');  // Agregar esta línea
+const helmet = require('helmet');
 const authRoutes = require('./src/routes/authRoutes');
 const empresaRoutes = require('./src/routes/empresaRoutes'); 
 const insumoRoutes = require('./src/routes/insumosRoutes'); 
@@ -42,10 +42,11 @@ app.use(cors({
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'http://localhost:3000'],
+        imgSrc: ["'self'", 'data:', 'https://backtesteo.onrender.com', 'http://localhost:3000'],
         scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         styleSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         connectSrc: ["'self'"],
+        // Añadir otras directivas según sea necesario
     }
 }));
 
