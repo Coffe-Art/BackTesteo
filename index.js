@@ -30,26 +30,18 @@ const upload = multer({
 });
 
 app.use(express.json());
+
+// Configuración de CORS
 app.use(cors({
-    origin: '*',
+    origin: '*', // Permite todos los orígenes
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204,
     allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
 }));
 
 // Configuración de Content Security Policy usando Helmet
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["*"], // Permite todos los orígenes
-      imgSrc: ["*"], // Permite imágenes desde cualquier origen
-      scriptSrc: ["*"], // Permite scripts desde cualquier origen
-      styleSrc: ["*"], // Permite estilos desde cualquier origen
-      connectSrc: ["*"], // Permite conexiones desde cualquier origen
-      // Añade otras directivas si es necesario
-    }
-  }
+  contentSecurityPolicy: false, // Desactiva CSP para simplificar pruebas
 }));
 
 // Rutas
