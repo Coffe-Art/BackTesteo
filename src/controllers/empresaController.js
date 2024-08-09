@@ -1,72 +1,81 @@
-const Evento = require('../models/evento');
+const Empresa = require('../models/empresa');
 
-// Controlador para crear un evento
-exports.createEvento = (req, res) => {
-    const { nombreEvento, fecha, ubicacion, empresasAsistente, duracion, lugar, descripcion, idAdministrador } = req.body;
-    console.log('Datos recibidos:', nombreEvento, fecha, ubicacion, empresasAsistente, duracion, lugar, descripcion, idAdministrador);
-    Evento.crearEvento({ nombreEvento, fecha, ubicacion, empresasAsistente, duracion, lugar, descripcion, idAdministrador }, (err, result) => {
+// Controlador para crear una empresa
+exports.createEmpresa = (req, res) => {
+    const { nombre, direccion, descripcion, idadministrador } = req.body;
+    console.log('Datos recibidos:', nombre, direccion, descripcion, idadministrador);
+    Empresa.create(nombre, direccion, descripcion, idadministrador, (err, result) => {
         if (err) {
-            console.error('Error al crear evento:', err);
+            console.error('Error al crear empresa:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
             console.log('Resultado de la creación:', result);
-            res.status(201).json({ message: 'Evento creado exitosamente' });
+            res.status(200).json({ message: 'Empresa creada exitosamente', id: result[0][0].codigoempresa });
         }
     });
 };
 
-// Controlador para obtener todos los eventos
-exports.getAllEventos = (req, res) => {
-    Evento.obtenerTodosEventos((err, eventos) => {
+// Controlador para obtener detalles de una empresa por su código
+exports.getEmpresa = (req, res) => {
+    const codigoempresa = req.params.codigoempresa;
+    Empresa.findById(codigoempresa, (err, empresa) => {
         if (err) {
-            console.error('Error al obtener eventos:', err);
+            console.error('Error al obtener empresa:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
-            res.status(200).json(eventos);
-        }
-    });
-};
-
-// Controlador para obtener un evento por ID
-exports.getEventoById = (req, res) => {
-    const idEvento = req.params.id;
-    Evento.obtenerEventoPorID(idEvento, (err, evento) => {
-        if (err) {
-            console.error('Error al obtener evento:', err);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        } else {
-            if (evento) {
-                res.status(200).json(evento);
+            if (empresa && empresa.length > 0) {
+                res.status(200).json(empresa[0]); // Suponiendo que el procedimiento almacenado devuelve un solo resultado
             } else {
-                res.status(404).json({ error: 'Evento no encontrado' });
+                res.status(404).json({ error: 'Empresa no encontrada' });
             }
         }
     });
 };
 
-// Controlador para actualizar un evento
-exports.updateEvento = (req, res) => {
-    const idEvento = req.params.id;
-    const { nombreEvento, fecha, ubicacion, empresasAsistente, duracion, lugar, descripcion, idAdministrador } = req.body;
-    Evento.actualizarEvento(idEvento, { nombreEvento, fecha, ubicacion, empresasAsistente, duracion, lugar, descripcion, idAdministrador }, (err, result) => {
+// Controlador para actualizar detalles de una empresa
+exports.updateEmpresa = (req, res) => {
+    const { codigoempresa } = req.params;
+    const { nombre, direccion, descripcion, idadministrador } = req.body;
+    Empresa.update(codigoempresa, nombre, direccion, descripcion, idadministrador, (err, result) => {
         if (err) {
-            console.error('Error al actualizar evento:', err);
+            console.error('Error al actualizar empresa:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
-            res.status(200).json({ message: 'Evento actualizado exitosamente' });
+            res.status(200).json({ message: 'Empresa actualizada exitosamente' });
         }
     });
 };
 
-// Controlador para eliminar un evento
-exports.deleteEvento = (req, res) => {
-    const idEvento = req.params.id;
-    Evento.eliminarEvento(idEvento, (err, result) => {
+// Controlador para eliminar una empresa
+exports.deleteEmpresa = (req, res) => {
+    const codigoempresa = req.params.codigoempresa;
+    Empresa.delete(codigoempresa, (err, result) => {
         if (err) {
-            console.error('Error al eliminar evento:', err);
+            console.error('Error al eliminar empresa:', err);
             res.status(500).json({ error: 'Error interno del servidor' });
         } else {
-            res.status(200).json({ message: 'Evento eliminado exitosamente' });
+            res.status(200).json({ message: 'Empresa eliminada exitosamente' });
         }
     });
 };
+
+// Controlador para obtener todas las empresas creadas por un administrador específico
+exports.getEmpresasByAdmin = (req, res) => {
+    const idadministrador = req.params.idadministrador;
+    Empresa.findByAdminId(idadministrador, (err, empresas) => {
+        if (err) {
+            console.error('Error al obtener empresas:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        } else {
+            if (empresas && empresas.length > 0) {
+                res.status(200).json(empresas);
+            } else {
+                res.status(404).json({ error: 'No se encontraron empresas para este administrador' });
+            }
+        }
+    });
+};
+
+// Los siguientes métodos de vinculación y desvinculación han sido eliminados,
+// ya que los procedimientos almacenados correspondientes no están definidos en el modelo.
+
