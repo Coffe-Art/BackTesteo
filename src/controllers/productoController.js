@@ -2,22 +2,44 @@ const Producto = require('../models/productos');
 const upload = require('../config/uploadConfig'); // Ruta correcta a tu configuración de multer
 const express = require('express');
 const router = express.Router();
+const containerClient = require('../config/azureStorageConfig');
 
-// Controlador para crear un nuevo producto
-exports.createProducto = (req, res) => {
+exports.createProducto = async (req, res) => {
     const { materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador } = req.body;
-    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
+    const file = req.file;
+    const urlProductoImg = file ? `/uploads/${file.filename}` : null;
 
     try {
         if (!nombre || !precio) {
             return res.status(400).json({ error: 'Nombre y precio son requeridos' });
         }
-        
-        Producto.create(materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, (err, result) => {
+
+        // Crear el producto en la base de datos
+        Producto.create(materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, async (err, result) => {
             if (err) {
                 console.error('Error al crear producto:', err);
                 return res.status(500).json({ error: 'Error interno del servidor' });
             }
+
+            // Subir la imagen a Azure Blob Storage si existe
+            if (file) {
+                const blobName = file.filename;
+                const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+                // Leer el archivo desde el disco
+                const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+                const fileStream = fs.createReadStream(filePath);
+
+                try {
+                    // Subir archivo
+                    await blockBlobClient.uploadStream(fileStream);
+                    fs.unlinkSync(filePath); // Eliminar archivo local
+                } catch (uploadErr) {
+                    console.error('Error al subir archivo a Azure:', uploadErr);
+                    return res.status(500).json({ error: 'Error al subir archivo a Azure Blob Storage' });
+                }
+            }
+
             res.status(201).json({ message: 'Producto creado exitosamente', id: result.insertId, urlProductoImg });
         });
     } catch (err) {
