@@ -8,12 +8,10 @@ const { promisify } = require('util');
 
 const query = promisify(pool.query).bind(pool);
 
+// Función para registrar un usuario
 const register = async (tipoUsuario, nombre, contrasena, correo_electronico, telefono, historia, estado, permisos, idAdministrador) => {
     try {
-        // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
-
-        // Hashear la contraseña antes de guardarla en la base de datos
         const hashedPassword = await bcrypt.hash(contrasena, 10);
 
         let procedure;
@@ -36,7 +34,6 @@ const register = async (tipoUsuario, nombre, contrasena, correo_electronico, tel
                 throw new Error('Tipo de usuario no válido');
         }
 
-        // Ejecutar el procedimiento almacenado con los parámetros
         await query(procedure, params);
     } catch (err) {
         console.error('Error en el registro:', err.message);
@@ -44,11 +41,10 @@ const register = async (tipoUsuario, nombre, contrasena, correo_electronico, tel
     }
 };
 
+// Función para iniciar sesión
 const login = async (tipoUsuario, correo_electronico, contrasena) => {
     try {
-        // Convertir tipoUsuario a minúsculas
         const tipoUsuarioLower = tipoUsuario.toLowerCase();
-
         let table;
         let idField;
 
@@ -69,7 +65,6 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
                 throw new Error('Tipo de usuario no válido');
         }
 
-        // Consultar al usuario en la base de datos por correo electrónico
         const result = await query(`SELECT * FROM ${table} WHERE correo_electronico = ?`, [correo_electronico]);
 
         if (result.length === 0) {
@@ -77,16 +72,13 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
         }
 
         const user = result[0];
-
-        // Comparar la contraseña ingresada con la contraseña hasheada almacenada
         const match = await bcrypt.compare(contrasena, user.contrasena);
 
         if (!match) {
             throw new Error('Contraseña incorrecta');
         }
 
-        // Generar un token JWT si la autenticación es exitosa
-        const token = jwt.sign({ id: user[idField], tipoUsuario: tipoUsuarioLower }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user[idField], tipoUsuario: tipoUsuarioLower }, process.env.JWT_SECRET, { expiresIn: '4h' });
         return token;
     } catch (err) {
         console.error('Error en el login:', err.message);
@@ -94,4 +86,5 @@ const login = async (tipoUsuario, correo_electronico, contrasena) => {
     }
 };
 
-module.exports = { register, login };
+
+module.exports = { register, login, };

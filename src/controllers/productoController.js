@@ -1,23 +1,46 @@
-const Producto = require('../models/productos');
-const upload = require('../config/uploadConfig'); // Ruta correcta a tu configuración de multer
 const express = require('express');
 const router = express.Router();
+const Producto = require('../models/productos');
+const path = require('path');
+const fs = require('fs');
+const createContainerClient = require('../config/azureStorageConfig'); // Importa la función async
 
-// Controlador para crear un nuevo producto
-exports.createProducto = (req, res) => {
+// Controlador para crear un producto
+exports.createProducto = async (req, res) => {
     const { materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador } = req.body;
-    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
+    const file = req.file;
+    const urlProductoImg = file ? `/uploads/${file.filename}` : null;
 
     try {
         if (!nombre || !precio) {
             return res.status(400).json({ error: 'Nombre y precio son requeridos' });
         }
-        
-        Producto.create(materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, (err, result) => {
+
+        // Crear cliente de contenedor de manera asíncrona
+        const containerClient = await createContainerClient();
+
+        Producto.create(materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, async (err, result) => {
             if (err) {
                 console.error('Error al crear producto:', err);
                 return res.status(500).json({ error: 'Error interno del servidor' });
             }
+
+            if (file) {
+                const blobName = file.filename;
+                const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+                const filePath = path.join(__dirname, '..', 'uploads', file.filename);
+                const fileStream = fs.createReadStream(filePath);
+
+                try {
+                    await blockBlobClient.uploadStream(fileStream);
+                    fs.unlinkSync(filePath); // Eliminar archivo local después de subirlo
+                } catch (uploadErr) {
+                    console.error('Error al subir archivo a Azure:', uploadErr);
+                    return res.status(500).json({ error: 'Error al subir archivo a Azure Blob Storage' });
+                }
+            }
+
             res.status(201).json({ message: 'Producto creado exitosamente', id: result.insertId, urlProductoImg });
         });
     } catch (err) {
@@ -73,26 +96,46 @@ exports.getProductosByCodigoEmpresa = (req, res) => {
 exports.updateProducto = (req, res) => {
     const idProducto = req.params.idProducto;
     const { materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador } = req.body;
-    const urlProductoImg = req.file ? `/uploads/${req.file.filename}` : null;
 
-    Producto.update(idProducto, materiales, nombre, categoria, precio, descripcion, urlProductoImg, cantidad, publicadoPor, codigoempresa, idAdministrador, (err, result) => {
+    Producto.update(idProducto, materiales, nombre, categoria, precio, descripcion, cantidad, publicadoPor, codigoempresa, idAdministrador, (err, result) => {
         if (err) {
             console.error('Error al actualizar producto:', err);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
-        res.status(200).json({ message: 'Producto actualizado exitosamente', urlProductoImg });
+        res.status(200).json({ message: 'Producto actualizado exitosamente' });
     });
 };
 
 // Controlador para eliminar un producto
-exports.deleteProducto = (req, res) => {
+exports.deleteProducto = async (req, res) => {
     const idProducto = req.params.idProducto;
 
-    Producto.delete(idProducto, (err) => {
-        if (err) {
-            console.error('Error al eliminar producto:', err);
-            return res.status(500).json({ error: 'Error interno del servidor' });
+    try {
+        // Primero obtén el producto para obtener la URL de la imagen
+        const producto = await new Promise((resolve, reject) => {
+            Producto.findById(idProducto, (err, result) => {
+                if (err) return reject(err);
+                resolve(result && result.length > 0 ? result[0] : null);
+            });
+        });
+
+        if (!producto) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
         }
+
+        // Eliminar el producto de la base de datos
+        await new Promise((resolve, reject) => {
+            Producto.delete(idProducto, (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        // Aquí puedes agregar código para eliminar la imagen del producto de Azure Blob Storage si es necesario
+
         res.status(200).json({ message: 'Producto eliminado exitosamente' });
-    });
+    } catch (err) {
+        console.error('Error al eliminar producto:', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 };
